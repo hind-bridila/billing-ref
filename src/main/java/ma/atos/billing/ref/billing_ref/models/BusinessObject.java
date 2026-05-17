@@ -6,13 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+
 @MappedSuperclass
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class BusinessObject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GLOBAL_SEQUENCE")
     @SequenceGenerator(
@@ -24,10 +28,10 @@ public class BusinessObject {
     private Long id;
 
     @CreatedDate
-    @Column(name = "CREATED_DATE")
-    private java.sql.Date createdDate;
+    @Column(name = "created_at")
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
-    @Column(name = "UPDATED_DATE")
-    private Date updatedDate;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedDate;
 }

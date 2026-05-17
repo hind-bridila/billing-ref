@@ -6,28 +6,36 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.atos.billing.ref.billing_ref.enums.PaymentType;
 
-import java.util.List;
-
-
+@Entity
+@Table(name = "customer")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
+public class Customer extends BusinessObject {
 
-    public class Customer extends BusinessObject {
+    @Column(name = "email")
+    private String email;
 
-        @Column(name = "PRENOM")
-        private String prenom;
+    @Column(name = "first_name")
+    private String firstName;
 
-        @Column(name = "NOM")
-        private String nom;
+    @Column(name = "last_name")
+    private String lastName;
 
-        @Column(name = "ADRESSE")
-        private String adresse;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-        @Enumerated(EnumType.STRING)
-        @Column(name = "PAYMENT_TYPE")
-        private PaymentType paymentType;
+    @Column(name = "PRENOM")
+    private String prenom;
 
+    @Column(name = "NOM")
+    private String nom;
 
+    @Column(name = "ADRESSE")
+    private String adresse;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PAYMENT_TYPE")
+    private PaymentType paymentType;
 }

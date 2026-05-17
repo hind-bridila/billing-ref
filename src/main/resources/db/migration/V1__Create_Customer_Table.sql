@@ -1,0 +1,16 @@
+
+CREATE SEQUENCE IF NOT EXISTS GLOBAL_SEQUENCE START WITH 1 INCREMENT BY 1;
+
+
+CREATE TABLE IF NOT EXISTS customer (
+    id BIGINT PRIMARY KEY DEFAULT nextval('GLOBAL_SEQUENCE'),
+    prenom VARCHAR(255),
+    nom VARCHAR(255),
+    adresse VARCHAR(255),
+    payment_type VARCHAR(255),
+     created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+);
+
+
+CREATE INDEX IF NOT EXISTS idx_customer_nom ON customer(nom);
