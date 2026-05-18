@@ -1,10 +1,8 @@
 package ma.atos.billing.ref.billing_ref.models;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ma.atos.billing.ref.billing_ref.enums.PaymentType;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "customer")
@@ -12,6 +10,8 @@ import ma.atos.billing.ref.billing_ref.enums.PaymentType;
 @NoArgsConstructor
 @Builder
 @Data
+@EqualsAndHashCode(callSuper = false)
+
 public class Customer extends BusinessObject {
 
     @Column(name = "email")
