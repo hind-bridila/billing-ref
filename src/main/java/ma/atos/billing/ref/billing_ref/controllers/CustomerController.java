@@ -1,7 +1,7 @@
 package ma.atos.billing.ref.billing_ref.controllers;
 
 import ma.atos.billing.ref.billing_ref.models.Customer;
-import ma.atos.billing.ref.billing_ref.services.CustomerService;
+import ma.atos.billing.ref.billing_ref.service.CustomerService;
 import ma.atos.billing.ref.billing_ref.enums.PaymentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

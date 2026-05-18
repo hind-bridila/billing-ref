@@ -1,26 +1,42 @@
 package ma.atos.billing.ref.billing_ref.service;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.stereotype.Service;
 import ma.atos.billing.ref.billing_ref.models.Customer;
 import ma.atos.billing.ref.billing_ref.repositories.CustomerRepository;
 import ma.atos.billing.ref.billing_ref.enums.PaymentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CustomerServiceImpl implements ma.atos.billing.ref.billing_ref.services.CustomerService {
+public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    /**
+     * CREATE - Efface le cache
+     */
+    @CacheEvict(value = "customers", allEntries = true)
     @Override
     public Customer createCustomer(Customer customer) {
-        if (customer.getNom() == null || customer.getNom().isEmpty()) {
-            throw new IllegalArgumentException("Le nom du customer est obligatoire");
+        if (customer == null || customer.getNom() == null || customer.getNom().isBlank()) {
+            throw new IllegalArgumentException("Le nom est obligatoire");
+        }
+        if (customer.getEmail() == null || customer.getEmail().isBlank()) {
+            throw new IllegalArgumentException("L'email est obligatoire");
         }
         return customerRepository.save(customer);
     }
 
+    /**
+     * READ BY ID - Utilise le cache
+     * @Cacheable = Si en cache, retourne du cache. Sinon, appelle la méthode.
+     */
+    @Cacheable(value = "customers", key = "#id")
     @Override
     public Optional<Customer> getCustomerById(Long id) {
         if (id == null || id <= 0) {
@@ -29,66 +45,81 @@ public class CustomerServiceImpl implements ma.atos.billing.ref.billing_ref.serv
         return customerRepository.findById(id);
     }
 
+    /**
+     * READ ALL - Utilise le cache
+     */
+    @Cacheable(value = "customers", key = "'all'")
     @Override
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
 
+    /**
+     * UPDATE - Efface le cache
+     * @CacheEvict = Supprime les entrées du cache
+     */
+    @CacheEvict(value = "customers", allEntries = true)
     @Override
-    public Customer updateCustomer(Long id, Customer customerDetails) {
+    public Customer updateCustomer(Long id, Customer customer) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("L'ID doit être positif");
         }
+        if (customer == null || customer.getNom() == null || customer.getNom().isBlank()) {
+            throw new IllegalArgumentException("Le nom est obligatoire");
+        }
 
         Optional<Customer> existingCustomer = customerRepository.findById(id);
-
-        if (existingCustomer.isEmpty()) {
-            throw new IllegalArgumentException("Customer avec l'ID " + id + " non trouvé");
+        if (existingCustomer.isPresent()) {
+            Customer existing = existingCustomer.get();
+            existing.setNom(customer.getNom());
+            existing.setPrenom(customer.getPrenom());
+            existing.setFirstName(customer.getFirstName());
+            existing.setLastName(customer.getLastName());
+            existing.setEmail(customer.getEmail());
+            existing.setAdresse(customer.getAdresse());
+            existing.setPhoneNumber(customer.getPhoneNumber());
+            existing.setPaymentType(customer.getPaymentType());
+            return customerRepository.save(existing);
+        } else {
+            throw new IllegalArgumentException("Customer avec l'ID " + id + " n'existe pas");
         }
-
-        Customer customer = existingCustomer.get();
-
-
-        if (customerDetails.getNom() != null && !customerDetails.getNom().isEmpty()) {
-            customer.setNom(customerDetails.getNom());
-        }
-        if (customerDetails.getPrenom() != null && !customerDetails.getPrenom().isEmpty()) {
-            customer.setPrenom(customerDetails.getPrenom());
-        }
-        if (customerDetails.getAdresse() != null && !customerDetails.getAdresse().isEmpty()) {
-            customer.setAdresse(customerDetails.getAdresse());
-        }
-        if (customerDetails.getPaymentType() != null) {
-            customer.setPaymentType(customerDetails.getPaymentType());
-        }
-
-
-        return customerRepository.save(customer);
     }
 
+    /**
+     * DELETE - Efface le cache
+     */
+    @CacheEvict(value = "customers", allEntries = true)
     @Override
     public void deleteCustomer(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("L'ID doit être positif");
         }
         if (!customerRepository.existsById(id)) {
-            throw new IllegalArgumentException("Customer avec l'ID " + id + " non trouvé");
+            throw new IllegalArgumentException("Customer avec l'ID " + id + " n'existe pas");
         }
         customerRepository.deleteById(id);
     }
 
+    /**
+     * SEARCH BY NOM - Utilise le cache
+     */
+    @Cacheable(value = "customers", key = "'nom_' + #nom")
     @Override
     public List<Customer> findByNom(String nom) {
-        if (nom == null || nom.isEmpty()) {
-            throw new IllegalArgumentException("Le nom ne doit pas être vide");
+        if (nom == null || nom.isBlank()) {
+            throw new IllegalArgumentException("Le nom est obligatoire");
         }
         return customerRepository.findByNom(nom);
     }
 
+    /**
+     * SEARCH BY PAYMENT TYPE - Utilise le cache
+     */
+    @Cacheable(value = "customers", key = "'paymentType_' + #paymentType")
     @Override
     public List<Customer> findByPaymentType(PaymentType paymentType) {
         if (paymentType == null) {
-            throw new IllegalArgumentException("Le type de paiement ne doit pas être vide");
+            throw new IllegalArgumentException("Le type de paiement est obligatoire");
         }
         return customerRepository.findByPaymentType(paymentType);
     }

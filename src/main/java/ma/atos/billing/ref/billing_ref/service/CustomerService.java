@@ -1,4 +1,4 @@
-package ma.atos.billing.ref.billing_ref.services;
+package ma.atos.billing.ref.billing_ref.service;
 
 import ma.atos.billing.ref.billing_ref.models.Customer;
 import ma.atos.billing.ref.billing_ref.enums.PaymentType;
