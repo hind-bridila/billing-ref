@@ -1,0 +1,27 @@
+services:
+
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: anas-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+      SKIP_SETCAP: "true"
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    cap_drop:
+        - ALL
+    command: vault server -dev
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: anas
+      RABBITMQ_DEFAULT_PASS: 123
+    ports:
+      - "5672:5672"
+      - "15672:15672"

@@ -6,8 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.sql.Date;
+import java.time.LocalDateTime;
+
+@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Data
 @AllArgsConstructor
@@ -25,9 +28,9 @@ public class BusinessObject {
 
     @CreatedDate
     @Column(name = "CREATED_DATE")
-    private java.sql.Date createdDate;
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
     @Column(name = "UPDATED_DATE")
-    private Date updatedDate;
+    private LocalDateTime updatedDate;
 }

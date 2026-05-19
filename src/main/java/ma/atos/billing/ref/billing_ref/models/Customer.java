@@ -1,14 +1,12 @@
 package ma.atos.billing.ref.billing_ref.models;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ma.atos.billing.ref.billing_ref.enums.PaymentType;
 
 import java.util.List;
-
-
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "customer", schema = "customer")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
